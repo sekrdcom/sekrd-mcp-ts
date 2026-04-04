@@ -1,0 +1,28 @@
+{
+  "name": "@sekrd/mcp-server",
+  "version": "0.1.0",
+  "description": "MCP server for Sekrd — security scanning from AI IDEs",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "sekrd-mcp": "./dist/index.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "@types/node": "^22.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sekrdcom/sekrd-mcp-ts"
+  },
+  "homepage": "https://sekrd.com",
+  "keywords": ["mcp", "security", "scanner", "sekrd", "supabase", "firebase", "cursor", "claude"]
+}
