@@ -7,9 +7,19 @@
   "bin": {
     "sekrd-mcp": "./dist/index.js"
   },
-  "files": ["dist"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node --input-type=module -e \"import { chmodSync } from 'node:fs'; chmodSync('dist/index.js', 0o755)\"",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
@@ -21,8 +31,20 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sekrdcom/sekrd-mcp-ts"
+    "url": "git+https://github.com/sekrdcom/sekrd-mcp-ts.git"
   },
   "homepage": "https://sekrd.com",
-  "keywords": ["mcp", "security", "scanner", "sekrd", "supabase", "firebase", "cursor", "claude"]
+  "bugs": {
+    "url": "https://github.com/sekrdcom/sekrd-mcp-ts/issues"
+  },
+  "keywords": [
+    "mcp",
+    "security",
+    "scanner",
+    "sekrd",
+    "supabase",
+    "firebase",
+    "cursor",
+    "claude"
+  ]
 }
