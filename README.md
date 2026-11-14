@@ -2,34 +2,19 @@
 
 MCP server for [Sekrd](https://sekrd.com) — deep security audit for AI-built apps. Run security scans directly from Cursor, Claude Code, and other AI IDEs.
 
-npm package coming soon. Until `@sekrd/mcp-server` is published, install from source.
-
-## Install from source
+## Install
 
 ```bash
-git clone https://github.com/sekrdcom/sekrd-mcp-ts.git
-cd sekrd-mcp-ts
-npm install
-npm run build
+npx -y @sekrd/mcp-server
 ```
-
-`npm run build` compiles `src/index.ts` to `dist/index.js`. Point your MCP client at that file with Node. Replace `/absolute/path/to/sekrd-mcp-ts` below with the directory you cloned.
 
 The server reads one environment variable, `SEKRD_API_KEY`. It is optional: leave it unset for the free monthly allowance, or set it for paid plans (unlimited scans). The process starts either way.
 
+```bash
+SEKRD_API_KEY=your_key npx -y @sekrd/mcp-server
+```
+
 ## Setup
-
-### Claude Code
-
-```bash
-claude mcp add sekrd -- node /absolute/path/to/sekrd-mcp-ts/dist/index.js
-```
-
-With API key (paid plans, unlimited scans):
-
-```bash
-claude mcp add sekrd -e SEKRD_API_KEY=your_key -- node /absolute/path/to/sekrd-mcp-ts/dist/index.js
-```
 
 ### Cursor
 
@@ -39,8 +24,8 @@ Add to `.cursor/mcp.json`:
 {
   "mcpServers": {
     "sekrd": {
-      "command": "node",
-      "args": ["/absolute/path/to/sekrd-mcp-ts/dist/index.js"],
+      "command": "npx",
+      "args": ["-y", "@sekrd/mcp-server"],
       "env": {
         "SEKRD_API_KEY": "your_key_here"
       }
@@ -49,9 +34,54 @@ Add to `.cursor/mcp.json`:
 }
 ```
 
+Omit the `env` block to use the free monthly allowance.
+
+### Claude Code
+
+```bash
+claude mcp add sekrd -e SEKRD_API_KEY=your_key -- npx -y @sekrd/mcp-server
+```
+
+Without a key:
+
+```bash
+claude mcp add sekrd -- npx -y @sekrd/mcp-server
+```
+
 ### Claude Desktop
 
 Add to `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "sekrd": {
+      "command": "npx",
+      "args": ["-y", "@sekrd/mcp-server"],
+      "env": {
+        "SEKRD_API_KEY": "your_key_here"
+      }
+    }
+  }
+}
+```
+
+## Install from source
+
+Use this when you want to run a local checkout instead of the published package.
+
+```bash
+git clone https://github.com/sekrdcom/sekrd-mcp-ts.git
+cd sekrd-mcp-ts
+npm install
+npm run build
+```
+
+`npm run build` compiles `src/index.ts` to `dist/index.js`. Point your MCP client at that file with Node, and pass `SEKRD_API_KEY` the same way as above. Replace `/absolute/path/to/sekrd-mcp-ts` with the directory you cloned.
+
+```bash
+claude mcp add sekrd -e SEKRD_API_KEY=your_key -- node /absolute/path/to/sekrd-mcp-ts/dist/index.js
+```
 
 ```json
 {
