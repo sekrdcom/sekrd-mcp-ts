@@ -64,7 +64,7 @@ async function listFindings(scanId: string): Promise<object> {
 }
 
 const server = new Server(
-  { name: "sekrd", version: "0.1.2" },
+  { name: "sekrd", version: "0.1.3" },
   { capabilities: { tools: {} } }
 );
 
@@ -73,7 +73,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
     {
       name: "scan_url",
       description:
-        "Run a full security scan on a URL. Returns score, verdict (SHIP/BLOCK), findings, and fix prompts. Takes 10-30 seconds.",
+        "Run a full security scan on a URL. Returns score, verdict (SHIP/BLOCK), findings, and fix prompts. Usually 1–2 minutes.",
       inputSchema: {
         type: "object" as const,
         properties: {
