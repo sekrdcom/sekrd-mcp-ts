@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "sekrd": {
+      "command": "npx",
+      "args": ["-y", "@sekrd/mcp-server"]
+    }
+  }
+}

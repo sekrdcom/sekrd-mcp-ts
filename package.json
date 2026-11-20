@@ -1,6 +1,7 @@
 {
   "name": "@sekrd/mcp-server",
-  "version": "0.1.0",
+  "version": "0.1.1",
+  "mcpName": "io.github.sekrdcom/sekrd",
   "description": "MCP server for Sekrd — security scanning from AI IDEs",
   "license": "MIT",
   "type": "module",

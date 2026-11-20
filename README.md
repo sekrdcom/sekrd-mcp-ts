@@ -1,6 +1,6 @@
 # @sekrd/mcp-server
 
-MCP server for [Sekrd](https://sekrd.com) — deep security audit for AI-built apps. Run security scans directly from Cursor, Claude Code, and other AI IDEs.
+Sekrd is an MCP server that runs a security scan on a URL from Cursor, Claude Desktop, Claude Code, and other AI IDEs. It returns a score, a SHIP or BLOCK verdict, findings, and copy-paste fix prompts. The project homepage is [https://sekrd.com](https://sekrd.com).
 
 ## Install
 
@@ -8,7 +8,12 @@ MCP server for [Sekrd](https://sekrd.com) — deep security audit for AI-built a
 npx -y @sekrd/mcp-server
 ```
 
-The server reads one environment variable, `SEKRD_API_KEY`. It is optional: leave it unset for the free monthly allowance, or set it for paid plans (unlimited scans). The process starts either way.
+## Environment variables
+
+| Variable | Required | Secret | Description |
+| --- | --- | --- | --- |
+| `SEKRD_API_KEY` | No | Yes | Bearer token sent as `Authorization`. Leave it unset for the free monthly allowance (10 scans, limited by IP). Set it for Pre-Launch Audit ($39 one-time) or Continuous Pro ($24–$29/mo). Get a key at [sekrd.com/dashboard/settings](https://sekrd.com/dashboard/settings). |
+| `SEKRD_API_BASE` | No | No | API base URL. Defaults to `https://api.sekrd.com/api/v1`. Set this only to point the server at another Sekrd API. |
 
 ```bash
 SEKRD_API_KEY=your_key npx -y @sekrd/mcp-server
@@ -18,7 +23,7 @@ SEKRD_API_KEY=your_key npx -y @sekrd/mcp-server
 
 ### Cursor
 
-Add to `.cursor/mcp.json`:
+Add to `.cursor/mcp.json` (or use the repo-root [`.mcp.json`](.mcp.json), which is the same command):
 
 ```json
 {
@@ -36,18 +41,6 @@ Add to `.cursor/mcp.json`:
 
 Omit the `env` block to use the free monthly allowance.
 
-### Claude Code
-
-```bash
-claude mcp add sekrd -e SEKRD_API_KEY=your_key -- npx -y @sekrd/mcp-server
-```
-
-Without a key:
-
-```bash
-claude mcp add sekrd -- npx -y @sekrd/mcp-server
-```
-
 ### Claude Desktop
 
 Add to `claude_desktop_config.json`:
@@ -64,6 +57,41 @@ Add to `claude_desktop_config.json`:
     }
   }
 }
+```
+
+### Claude Code
+
+```bash
+claude mcp add sekrd -e SEKRD_API_KEY=your_key -- npx -y @sekrd/mcp-server
+```
+
+Without a key:
+
+```bash
+claude mcp add sekrd -- npx -y @sekrd/mcp-server
+```
+
+## Tools
+
+| Tool | Description |
+| --- | --- |
+| `scan_url` | Run a full security scan on a URL. Returns score, verdict (SHIP/BLOCK), findings, and fix prompts. Takes 10–30 seconds. Argument: `url` (string, required). |
+| `get_scan` | Get results of a previous scan by its ID. Argument: `scan_id` (string, required). |
+| `list_findings` | List findings that include copy-paste fix prompts for Cursor, Lovable, and Claude Code. Argument: `scan_id` (string, required). |
+
+## Example
+
+```
+You: Scan https://my-app.vercel.app for security issues
+
+Sekrd: Score 34/100 — BLOCK
+3 critical, 5 high, 2 medium findings
+
+1. [CRITICAL] Stripe live secret key exposed in client bundle
+   Fix: Move 'sk_live_...' to .env file and use NEXT_PUBLIC_ prefix only for public keys
+
+2. [CRITICAL] Supabase RLS policy USING(true) on users table
+   Fix: Replace with USING(auth.uid() = user_id)
 ```
 
 ## Install from source
@@ -97,36 +125,6 @@ claude mcp add sekrd -e SEKRD_API_KEY=your_key -- node /absolute/path/to/sekrd-m
 }
 ```
 
-## API Key
-
-- **Without key**: 10 free scans per month (IP rate limit)
-- **With key**: Unlimited scans on Pre-Launch Audit ($39 one-time) or Continuous Pro ($24-$29/mo) plans
-
-Get your key at [sekrd.com/dashboard/settings](https://sekrd.com/dashboard/settings).
-
-## Tools
-
-| Tool | Description |
-|------|-------------|
-| `scan_url(url)` | Full security scan. Returns score, verdict (SHIP/BLOCK), findings + fix prompts. |
-| `get_scan(scan_id)` | Get results of a previous scan. |
-| `list_findings(scan_id)` | Get only findings with fix prompts for your IDE. |
-
-## Example
-
-```
-You: Scan https://my-app.vercel.app for security issues
-
-Sekrd: Score 34/100 — BLOCK
-3 critical, 5 high, 2 medium findings
-
-1. [CRITICAL] Stripe live secret key exposed in client bundle
-   Fix: Move 'sk_live_...' to .env file and use NEXT_PUBLIC_ prefix only for public keys
-
-2. [CRITICAL] Supabase RLS policy USING(true) on users table  
-   Fix: Replace with USING(auth.uid() = user_id)
-```
-
 ## License
 
-MIT
+MIT. See [LICENSE](LICENSE).

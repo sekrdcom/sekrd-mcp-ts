@@ -7,9 +7,15 @@ import {
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 
-const API_BASE = "https://api.sekrd.com/api/v1";
+const DEFAULT_API_BASE = "https://api.sekrd.com/api/v1";
 const POLL_INTERVAL = 3000;
 const MAX_POLLS = 40;
+
+function apiBase(): string {
+  const configured = process.env.SEKRD_API_BASE?.trim();
+  if (!configured) return DEFAULT_API_BASE;
+  return configured.replace(/\/+$/, "");
+}
 
 function headers(): Record<string, string> {
   const h: Record<string, string> = { "Content-Type": "application/json" };
@@ -19,7 +25,7 @@ function headers(): Record<string, string> {
 }
 
 async function scanUrl(url: string): Promise<object> {
-  const res = await fetch(`${API_BASE}/scan/url`, {
+  const res = await fetch(`${apiBase()}/scan/url`, {
     method: "POST",
     headers: headers(),
     body: JSON.stringify({ url }),
@@ -32,7 +38,7 @@ async function scanUrl(url: string): Promise<object> {
   const scanId = data.scan_id;
 
   for (let i = 0; i < MAX_POLLS; i++) {
-    const poll = await fetch(`${API_BASE}/scans/${scanId}`, { headers: headers() });
+    const poll = await fetch(`${apiBase()}/scans/${scanId}`, { headers: headers() });
     if (!poll.ok) return { error: `Poll failed: HTTP ${poll.status}` };
     const scan = await poll.json();
     if (["complete", "failed", "error"].includes(scan.status)) return scan;
@@ -42,13 +48,13 @@ async function scanUrl(url: string): Promise<object> {
 }
 
 async function getScan(scanId: string): Promise<object> {
-  const res = await fetch(`${API_BASE}/scans/${scanId}`, { headers: headers() });
+  const res = await fetch(`${apiBase()}/scans/${scanId}`, { headers: headers() });
   if (!res.ok) return { error: `HTTP ${res.status}` };
   return res.json();
 }
 
 async function listFindings(scanId: string): Promise<object> {
-  const res = await fetch(`${API_BASE}/scans/${scanId}`, { headers: headers() });
+  const res = await fetch(`${apiBase()}/scans/${scanId}`, { headers: headers() });
   if (!res.ok) return { error: `HTTP ${res.status}` };
   const scan = await res.json();
   const findings = (scan.findings || []).filter(
@@ -58,7 +64,7 @@ async function listFindings(scanId: string): Promise<object> {
 }
 
 const server = new Server(
-  { name: "sekrd", version: "0.1.0" },
+  { name: "sekrd", version: "0.1.1" },
   { capabilities: { tools: {} } }
 );
 

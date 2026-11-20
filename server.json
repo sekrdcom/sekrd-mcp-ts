@@ -1,0 +1,39 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.sekrdcom/sekrd",
+  "title": "Sekrd",
+  "description": "MCP server for Sekrd — security scanning from AI IDEs",
+  "websiteUrl": "https://sekrd.com",
+  "repository": {
+    "url": "https://github.com/sekrdcom/sekrd-mcp-ts",
+    "source": "github"
+  },
+  "version": "0.1.1",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "@sekrd/mcp-server",
+      "version": "0.1.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "description": "Optional Sekrd API key. Omit it for the free monthly allowance; set it for paid plans.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": true,
+          "name": "SEKRD_API_KEY"
+        },
+        {
+          "description": "Optional API base URL. Defaults to https://api.sekrd.com/api/v1.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": false,
+          "default": "https://api.sekrd.com/api/v1",
+          "name": "SEKRD_API_BASE"
+        }
+      ]
+    }
+  ]
+}
