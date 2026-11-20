@@ -64,7 +64,7 @@ async function listFindings(scanId: string): Promise<object> {
 }
 
 const server = new Server(
-  { name: "sekrd", version: "0.1.1" },
+  { name: "sekrd", version: "0.1.2" },
   { capabilities: { tools: {} } }
 );
 

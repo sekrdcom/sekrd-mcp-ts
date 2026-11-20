@@ -31,13 +31,29 @@ jobs:
       - name: Build
         run: npm run build
 
+      # Skip when this exact version is already on npm, including when
+      # NODE_AUTH_TOKEN is empty. Fail only when it is missing and there is
+      # no token. A skip exits 0 so the registry steps below still run.
       - name: Publish to npm
-        run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          # Actions uses bash -e. A failing npm view inside `if` does not abort.
+          if PUBLISHED=$(npm view "@sekrd/mcp-server@${VERSION}" version 2>/dev/null); then
+            if [ "$PUBLISHED" = "$VERSION" ]; then
+              echo "@sekrd/mcp-server@${VERSION} is already on npm; skipping publish."
+              exit 0
+            fi
+          fi
+          if [ -z "${NODE_AUTH_TOKEN}" ]; then
+            echo "::error::NODE_AUTH_TOKEN is empty and @sekrd/mcp-server@${VERSION} is not on npm."
+            exit 1
+          fi
+          npm publish --provenance --access public
 
-      # The registry checks the published npm package for mcpName, so this
-      # only runs after npm publish succeeds.
+      # The registry checks the published npm package for mcpName. These steps
+      # run after a successful publish and after a skip of an existing version.
       - name: Install cosign
         uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
 
